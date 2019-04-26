@@ -12,6 +12,15 @@ from threading import Thread, Lock
 import numpy as np
 import select
 
+def write_log(message):
+    global global_var
+    _sequence = global_var
+    global_var += 1
+    with open('/home/niw217/new/log/coordinator_' + threading.current_thread().name + '.log', 'a') as file:
+        file.write(str(_sequence) + '\n')
+        file.write(message)
+        file.write('\n')
+
 class client:
     def __init__(self, max_data_size):
         self.lock_ = threading.Lock()
@@ -159,6 +168,10 @@ class client:
                 # print('mes_state2["keys"]',mes_state2["keys"])
                 mes_state2["value"] = [value[i] for i in server_[server]]
                 mes_encode = json.dumps(mes_state2).encode('utf-8')
+
+                # Todo: write log in coordinator
+                write_log("prepare_message: " + str(mes_encode))
+
                 self.server_map[server].sendall(mes_encode)
 
                 print("message send to ", server)
@@ -177,6 +190,10 @@ class client:
                     mes_state3["flag"] = "3"
                     mes_state3["lock_list"] = lock_list[server]
                     mes_encode = json.dumps(mes_state3).encode('utf-8')
+
+                    # Todo: write log in coordinator
+                    write_log("abort: " + str(mes_encode))
+
                     self.server_map[server].sendall(mes_encode)
                     print("message send to ", server)
                     res = self.server_map[server].recv(self.max_data_size)
@@ -197,6 +214,10 @@ class client:
                     mes_state4["keys"] = keys
                     mes_state4["value"] = value
                     mes_encode = json.dumps(mes_state4).encode('utf-8')
+
+                    # Todo: write log in coordinator
+                    write_log("commit: " + str(mes_encode))
+
                     self.server_map[server].sendall(mes_encode)
                     print("message send to ", server)
                     res = self.server_map[server].recv(self.max_data_size)
@@ -266,6 +287,7 @@ def main():
 
 
 if __name__ == '__main__':
+    global_var = 0
     thread_list = []
     for i in range(8):
         thread_list.append(Thread(target=main))
