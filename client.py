@@ -169,7 +169,7 @@ class client:
                 mes_state2["value"] = [value[i] for i in server_[server]]
                 mes_encode = json.dumps(mes_state2).encode('utf-8')
 
-                # Todo: write log in coordinator
+                # Done: write log in coordinator
                 write_log("prepare_message: " + str(mes_encode))
 
                 self.server_map[server].sendall(mes_encode)
@@ -191,7 +191,7 @@ class client:
                     mes_state3["lock_list"] = lock_list[server]
                     mes_encode = json.dumps(mes_state3).encode('utf-8')
 
-                    # Todo: write log in coordinator
+                    # Done: write log in coordinator
                     write_log("abort: " + str(mes_encode))
 
                     self.server_map[server].sendall(mes_encode)
@@ -215,7 +215,7 @@ class client:
                     mes_state4["value"] = value
                     mes_encode = json.dumps(mes_state4).encode('utf-8')
 
-                    # Todo: write log in coordinator
+                    # Done: write log in coordinator
                     write_log("commit: " + str(mes_encode))
 
                     self.server_map[server].sendall(mes_encode)
